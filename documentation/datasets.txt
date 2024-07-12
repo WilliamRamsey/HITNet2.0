@@ -1,0 +1,6 @@
+INFORMATION FOR NFL CONCUSSION DATASET
+https://sportsandsociety.osu.edu/sports-data-sets
+https://www.kaggle.com/code/itrustonlykent/in-game-video-analysis-eda-on-the-nfl-dataset
+https://github.com/trevorfiez/Football-Player-Tracking-Dataset/tree/master
+https://github.com/BurntSushi/nflvid
+https://cvgl.stanford.edu/teaching/cs231a_winter1415/prev/projects/LeeTimothy.pdf
