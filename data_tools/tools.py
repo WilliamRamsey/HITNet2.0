@@ -27,4 +27,4 @@ def select_images(video_path, out_path, num_frames=None, frame_interval=None):
 
     
 
-select_images(f"{work_dir}/data/raw/test.mp4", f"{work_dir}/data/images/", num_frames=10)
+# select_images(f"{work_dir}/data/raw/test.mp4", f"{work_dir}/data/images/", num_frames=10)
