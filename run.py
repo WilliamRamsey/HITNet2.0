@@ -6,9 +6,9 @@ from ultralytics.utils.plotting import Annotator, colors
 def run_model(model_path, video_path):
     track_history = defaultdict(lambda: [])
     model = YOLO("models/yolov8s-seg.pt")  # segmentation model
-    cap = cv2.VideoCapture("test.mp4")
+    cap = cv2.VideoCapture("data/raw/test.mp4")
     w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
-    out = cv2.VideoWriter("/output/obj.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
+    out = cv2.VideoWriter("data/output/obj.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
 
     while True:
         ret, im0 = cap.read()
@@ -36,3 +36,5 @@ def run_model(model_path, video_path):
     out.release()
     cap.release()
     cv2.destroyAllWindows()
+
+run_model(1,1)
