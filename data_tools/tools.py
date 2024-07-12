@@ -16,15 +16,17 @@ def select_images(video_path, out_path, num_frames=None, frame_interval=None):
 
     i_in = 0
     i_out = 0
+    ret, frame = capture.read()
 
-    while i_in < vid_len:
-        ret, frame = capture.read()
+    while ret:
         if (i_in % frame_interval) == 0:
             i_out += 1
             cv2.imwrite(f"{out_path}{i_out}.jpg", frame)
         i_in += 1
+        ret, frame = capture.read()
 
-
+    capture.release()
+    cv2.destroyAllWindows()
     
 
 # select_images(f"{work_dir}/data/raw/test.mp4", f"{work_dir}/data/images/", num_frames=10)
