@@ -3,10 +3,10 @@ import cv2
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 
+# Runs a given yolo segmentation model on a video
 def run_model(model_path, video_path):
-    track_history = defaultdict(lambda: [])
-    model = YOLO("models/yolov8s-seg.pt")  # segmentation model
-    cap = cv2.VideoCapture("data/raw/test.mp4")
+    model = YOLO(model_path)  # Loads segmentation model
+    cap = cv2.VideoCapture(video_path)
     w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
     out = cv2.VideoWriter("data/output/obj.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
 
@@ -37,4 +37,6 @@ def run_model(model_path, video_path):
     cap.release()
     cv2.destroyAllWindows()
 
-run_model(1,1)
+# C:\Users\willi\OneDrive\Desktop\HITNET\yolov8n-seg.pt
+# C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train3/weights/best.pt
+run_model("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train3/weights/best.pt", "C:/Users/willi/OneDrive/Desktop/HITNET DATA/1.mp4")
