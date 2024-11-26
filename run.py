@@ -25,7 +25,8 @@ def run_model(model_path, video_path):
             track_ids = results[0].boxes.id.int().cpu().tolist()
 
             for mask, track_id in zip(masks, track_ids):
-                annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True), track_label=str(track_id))
+                # annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True), track_label=str(track_id))
+                annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True))
 
         out.write(im0)
         cv2.imshow("instance-segmentation-object-tracking", im0)
@@ -39,4 +40,4 @@ def run_model(model_path, video_path):
 
 # C:\Users\willi\OneDrive\Desktop\HITNET\yolov8n-seg.pt
 # C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train3/weights/best.pt
-run_model("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train3/weights/best.pt", "C:/Users/willi/OneDrive/Desktop/HITNET DATA/1.mp4")
+run_model("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train14/weights/best.pt", "C:/Users/willi/OneDrive/Desktop/HITNET DATA/1.mp4")
