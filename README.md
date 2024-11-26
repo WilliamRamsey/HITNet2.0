@@ -1,5 +1,9 @@
 # HITNET Auto-Segmentation Helmet Detection
 
-## Note to future William
+## Dataset Addition Outline
 
-We are currently in the process of transfer learning with yolo9n-seg model. The current data is stored in data/
+- working directory is data/datasets/wrapped2
+- partially completed datasets are in /games1_10 and /games1_25
+- continue generating new annotations by running following code
+    labelme
+    python data_tools/labelme2yolo.py --json_dir {path to annotations} --seg

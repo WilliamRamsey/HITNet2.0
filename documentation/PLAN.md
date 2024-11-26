@@ -2,14 +2,16 @@
 
 ## Steps
 
-### Train segmentation model of football helmet dataset
-
-### Build tracking and segmentation model on yolo v8
+### [ ] Build tracking and segmentation model on yolo v8
 
 [https://docs.ultralytics.com/guides/instance-segmentation-and-tracking/#samples]
 
-### Feild feature detection
+### [ ] Feild feature detection
 
-### Physics engine
+- Use length of hashes to geometrically shift image to zero-perspective true square.
 
-### Yolo model retool - player number identification
+### [ ] Physics engine
+
+### [ ] Player labeling UI
+
+### [ ] Player number auto-classifier
