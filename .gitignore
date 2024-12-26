@@ -1,4 +1,5 @@
 data/*
 runs/*
+data_tools/test/*
 *.json
 *.pt
