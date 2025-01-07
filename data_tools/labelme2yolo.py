@@ -17,7 +17,6 @@ import PIL.Image
 from sklearn.model_selection import train_test_split
 from labelme import utils
 
-
 class Labelme2YOLO(object):
     
     def __init__(self, json_dir, to_seg=False):

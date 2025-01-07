@@ -40,4 +40,4 @@ def run_model(model_path, video_path):
 
 # C:\Users\willi\OneDrive\Desktop\HITNET\yolov8n-seg.pt
 # C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train3/weights/best.pt
-run_model("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train/weights/best.pt", "C:/Users/willi/OneDrive/Desktop/HITNET DATA/2.mp4")
+run_model("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train4/weights/best.pt", "C:/Users/willi/OneDrive/Desktop/HITNET DATA/2.mp4")

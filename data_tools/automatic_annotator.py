@@ -4,12 +4,12 @@ import json
 import cv2
 from ultralytics.data.annotator import auto_annotate
 
-path_to_model = "C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train/weights/best.pt"
-path_to_images = "C:/Users/willi/OneDrive/Desktop/HITNET/data_tools/test"
+path_to_model = "C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train4/weights/best.pt"
+path_to_images = "C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/wrapped3"
 
 # Use custom model to run first round of analysis for labelme.
 auto_annotate(  
-    data="data/datasets/games1_40/YOLODataset_seg/images/val",
+    data=path_to_images,
     det_model=path_to_model,
     sam_model="C:/Users/willi/OneDrive/Desktop/HITNET/models/mobile_sam.pt",
     output_dir=f"{path_to_images}/annotations",
@@ -19,9 +19,9 @@ auto_annotate(
 # convert yolo to labelme json format
 for file in os.listdir(f"{path_to_images}/annotations"):
   # read dimensions based on origional image and add image byte data
-  img = cv2.imread(f"{path_to_images}/{file[:-4]}.png")
+  img = cv2.imread(f"{path_to_images}/{file[:-4]}.jpg")
   h, w = img.shape[:2]
-  with open(f"{path_to_images}/{file[:-4]}.png", "rb") as img_file:
+  with open(f"{path_to_images}/{file[:-4]}.jpg", "rb") as img_file:
     img_binary = img_file.read()
   encoded_binary = base64.b64encode(img_binary).decode("utf-8")
 
@@ -30,7 +30,7 @@ for file in os.listdir(f"{path_to_images}/annotations"):
     "version": "5.5.0",
     "flags": {},
     "shapes": [],
-    "imagePath": f"..\\{file[:-4].replace("/", "\\")}.png",
+    "imagePath": f"..\\{file[:-4].replace("/", "\\")}.jpg",
     "imageData": encoded_binary,
     "imageHeight": h,
     "imageWidth": w
