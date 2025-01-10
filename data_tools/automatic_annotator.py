@@ -4,7 +4,7 @@ import json
 import cv2
 from ultralytics.data.annotator import auto_annotate
 
-path_to_model = "C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train4/weights/best.pt"
+path_to_model = "C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train6/weights/best.pt"
 path_to_images = "C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/wrapped3"
 
 # Use custom model to run first round of analysis for labelme.

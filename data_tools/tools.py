@@ -1,8 +1,6 @@
 import cv2
 import math
 
-work_dir = "C:/Users/willi/OneDrive/Desktop/HITNET/"
-
 def select_images(video_path, out_path, num_frames=None, frame_interval=None):
     capture = cv2.VideoCapture(video_path)
     vid_len = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -21,7 +19,7 @@ def select_images(video_path, out_path, num_frames=None, frame_interval=None):
     while ret:
         if (i_in % frame_interval) == 0:
             i_out += 1
-            cv2.imwrite(f"{out_path}{i_out}.jpg", frame)
+            cv2.imwrite(f"{out_path}/{i_out}.jpg", frame)
         i_in += 1
         ret, frame = capture.read()
 
@@ -29,4 +27,6 @@ def select_images(video_path, out_path, num_frames=None, frame_interval=None):
     cv2.destroyAllWindows()
     
 
-# select_images(f"{work_dir}/data/raw/test.mp4", f"{work_dir}/data/images/", num_frames=10)
+select_images("C:/Users/willi/OneDrive/Desktop/HITNET DATA/2024 Week 15/1.mp4", 
+              "C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Auto-Segmented",
+              num_frames=30)
