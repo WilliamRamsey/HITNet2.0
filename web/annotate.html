@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Upload Video | HITNET</title>
+    <title>Annotate | HITNET</title>
     <!--<link rel="stylesheet" href="./style.css">-->
     <!--<link rel="icon" href="./favicon.ico" type="image/x-icon">-->
   </head>
   <body>
     <main>
-      <h1>Upload video for segmentation</h1>  
+      <h1>Input Helmet ID</h1>  
     </main>
-    <form action="/upload_video" method="post", enctype="multipart/form-data">
-  
-      <input type="file" id="FileUpload" name="file">
+    <img>
+    <form action="/" method="post", enctype="multipart/form-data">
+      <input type="text" name="trackID">
       <input type="submit">
-
     </form>
+    <img scr="/annotate?image=True">
+
   </body>
 </html>

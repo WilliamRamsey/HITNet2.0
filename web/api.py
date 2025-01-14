@@ -1,8 +1,41 @@
+import cv2
+from ultralytics import YOLO
+import json
+
 import os
 from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
-from werkzeug.datastructures import MultiDict
 
+# ANNOTATION SAVER
+def annotate(video_path):
+    model = YOLO("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train6/weights/best.pt")
+    capture = cv2.VideoCapture(video_path)
+    # w, h, fps = (int(capture.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
+    
+    players = {}
+
+    # using 1 indexing
+    frame_number = 0
+    while True:
+        ret, im0 = capture.read()
+        frame_number += 1
+        # track IDs are unique for each clip
+        image_dict = {}
+
+        # catch video ending
+        if not ret:
+            break
+        
+        # actually run model
+        results = model.track(im0, persists=True)
+        # ensure model results are not empty
+        if results[0].boxes.id is not None and results[0].masks is not None:
+            track_ids = results[0].boxes.id.int().cpu().tolist()
+            image_dict["track_ids"] = track_ids
+        
+        # go through and save each frame as specified
+        # will store each frame ID as argument in URL
+        
 # FLASK CONFIGURATION
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "C:/Users/willi/OneDrive/Desktop/HITNET/web/video_upload"
@@ -47,11 +80,10 @@ def upload_video():
 @app.route("/annotate", methods=["POST", "GET"])
 def get_annotations():
     
-    # Read Track ID form
-    if request.method == "POST":
-        pass # USE FORM ELEMENT
-    
-    return
+    # Return webpage on first request
+    with open("upload_video.html") as file:
+        return file.read()
+
 
 # Model returns first unassigned frame
 # for frame in frames:

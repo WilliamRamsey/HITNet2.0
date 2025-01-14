@@ -1,4 +1,3 @@
-from collections import defaultdict
 import cv2
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
@@ -13,9 +12,8 @@ def run_model(model_path, video_path):
     while True:
         ret, im0 = cap.read()
         if not ret:
-            print("Video frame is empty or video processing has been successfully completed.")
             break
-
+        
         annotator = Annotator(im0, line_width=1)
 
         results = model.track(im0, persist=True)
