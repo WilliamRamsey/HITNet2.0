@@ -10,18 +10,26 @@ def run_model(model_path, video_path):
     out = cv2.VideoWriter("data/output/obj.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
 
     while True:
+        # Read the image from video
         ret, im0 = cap.read()
+        # Stop if image is empty
         if not ret:
             break
         
+        # Initialize annotation drawer
         annotator = Annotator(im0, line_width=1)
-
+        # Actually run the model
         results = model.track(im0, persist=True)
 
+        # Make sure output is not empty
         if results[0].boxes.id is not None and results[0].masks is not None:
-            masks = results[0].masks.xy
+            # List of numpy arrays [x, y] arrays of each segmentation point
+            masks = results[0].masks.xy 
+
+            # List of coorisponding ids for each helmet
             track_ids = results[0].boxes.id.int().cpu().tolist()
 
+            # 
             for mask, track_id in zip(masks, track_ids):
                 annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True), label=str(track_id))
                 # annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True), label=None)
