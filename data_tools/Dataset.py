@@ -12,7 +12,6 @@ Dataset-Name/
 - 1.jpg
 - 1.json
 ...
-We rely on Labelme annotations to be most current
 Only use YOLO as final prep for training
 """
 
@@ -73,66 +72,72 @@ class Dataset:
         
         # convert yolo to labelme json format
         for file in os.listdir(f"{self.path}/annotations"):
-            # read dimensions based on origional image and add image byte data
-            img = cv2.imread(f"{self.path}/{file[:-4]}.jpg")
-            h, w = img.shape[:2]
-            with open(f"{self.path}/{file[:-4]}.jpg", "rb") as img_file:
-                img_binary = img_file.read()
-            encoded_binary = base64.b64encode(img_binary).decode("utf-8")
+            self.format_annotation_as_labelme(file)
 
-            # generate json template at image level
-            output_dict = {
-            "version": "5.5.0",
-            "flags": {},
-            "shapes": [],
-            "imagePath": f"..\\{file[:-4].replace("/", "\\")}.jpg",
-            "imageData": encoded_binary,
-            "imageHeight": h,
-            "imageWidth": w
-            }
+        # shutil.rmtree(f"{self.path}/annotations")
 
-            # read yolo formatted data
-            with open(f"{self.path}/annotations/{file}") as yolo_annotation:
-            # iterate through lines in yolo annotation
-                for yolo_helmet in yolo_annotation.readlines():
-                    yolo_helmet = yolo_helmet.split(" ")
-                    # grab first value as class ID
-                    print(yolo_helmet)
-                    class_id = yolo_helmet[0]
-                    # grab the x and y values as their own extended lists
-                    yolo_x_list = yolo_helmet[1::2]
-                    yolo_y_list = yolo_helmet[2::2]
-                    points = []
-                    # iterate through values, scale up, and append to list
-                    for yolo_x, yolo_y in zip(yolo_x_list, yolo_y_list):
-                        point = [float(yolo_x)*w, float(yolo_y)*h]
-                        points.append(point)
-                    
-                    # ADJUTST "Helmet" to class ID for production
-                    output_dict["shapes"].append({
-                    "label": "Helmet",
-                    "points": points,
-                    "group_id": None,
-                    "description": "",
-                    "shape_type": "polygon",
-                    "flags": {},
-                    "mask": None
-                    })
+    def format_annotation_as_labelme(self, file):
+        # read dimensions based on origional image and add image byte data
+        img = cv2.imread(f"{self.path}/{file[:-4]}.jpg")
+        h, w = img.shape[:2]
+        with open(f"{self.path}/{file[:-4]}.jpg", "rb") as img_file:
+            img_binary = img_file.read()
+        encoded_binary = base64.b64encode(img_binary).decode("utf-8")
+
+        # generate json template at image level
+        output_dict = {
+        "version": "5.5.0",
+        "flags": {},
+        "shapes": [],
+        "imagePath": f"..\\{file[:-4].replace("/", "\\")}.jpg",
+        "imageData": encoded_binary,
+        "imageHeight": h,
+        "imageWidth": w
+        }
+
+        # read yolo formatted data
+        with open(f"{self.path}/annotations/{file}") as yolo_annotation:
+        # iterate through lines in yolo annotation
+            for yolo_helmet in yolo_annotation.readlines():
+                yolo_helmet = yolo_helmet.split(" ")
+                # grab first value as class ID
+                print(yolo_helmet)
+                class_id = yolo_helmet[0]
+                # grab the x and y values as their own extended lists
+                yolo_x_list = yolo_helmet[1::2]
+                yolo_y_list = yolo_helmet[2::2]
+                points = []
+                # iterate through values, scale up, and append to list
+                for yolo_x, yolo_y in zip(yolo_x_list, yolo_y_list):
+                    point = [float(yolo_x)*w, float(yolo_y)*h]
+                    points.append(point)
+                
+                # ADJUTST "Helmet" to class ID for production
+                output_dict["shapes"].append({
+                "label": "Helmet",
+                "points": points,
+                "group_id": None,
+                "description": "",
+                "shape_type": "polygon",
+                "flags": {},
+                "mask": None
+                })
             
             
             # save dict as json
             with open(f"{self.path}/{file[:-4]}.json", "w") as output_json:
                 json.dump(output_dict, output_json, indent=2)
 
-        # shutil.rmtree(f"{self.path}/annotations")
+        pass
+
+    # Helper function used to convert saved YOLO annotations to labelme
+    def format_annotation_as_yolo(self, annotation_path):
+        pass
 
     # Generates final YOLO dataset in folder for training
-    def format_as_yolo(self):
+    def format_dataset_as_yolo(self):
         yolo_dataset = LabelMe2YOLO(self.path, True)
-         
-    # Helper function used to convert saved YOLO annotations to labelme
-    def convert_to_labelme(self):
-        pass
+    
 
     # Helper function to get current largest image
     def get_highest_image_index(self):
