@@ -1,7 +1,6 @@
 import LabelMe2YOLO
 import cv2
 import os
-import shutil
 import base64
 import json
 from ultralytics.data.annotator import auto_annotate
@@ -51,12 +50,17 @@ class Dataset:
         cv2.destroyAllWindows()
 
     # Takes images and LABELME annotations in and adds them to end of dataset
-    # Assumes current path 
+    # Assumes current path is has correctly labeled images 0 to whatever
+    # Assumes Annotations folder has been deleted
     def add_data(self, new_data_path):
         # Get file with largest numeric name in current files. BOLDLY ASSUMES ALL FILE NAMES CAN BE CAST AS INTS
         highest_image_index = self.get_highest_image_index()
         for filename in os.listdir(new_data_path):
-            print(filename)
+            highest_image_index = highest_image_index + 1
+            extension = filename.split(".")[-1]
+            source_path = new_data_path + "/" + filename
+            destination_path = self.path + "/" + str(highest_image_index) + "." + extension
+            os.rename(source_path, destination_path)
 
     # Generates labelme annotations in directory
     # Writes over old saved annotations
@@ -73,9 +77,12 @@ class Dataset:
         # convert yolo to labelme json format
         for file in os.listdir(f"{self.path}/annotations"):
             self.format_annotation_as_labelme(file)
-
-        # shutil.rmtree(f"{self.path}/annotations")
-
+            # Delete old annotations file
+            os.remove(f"{self.path}/annotations/{file}")
+        # delete annotations folder
+        os.rmdir(f"{self.path}/annotations")
+        
+    # Assumes annotations are stored in /annotations
     def format_annotation_as_labelme(self, file):
         # read dimensions based on origional image and add image byte data
         img = cv2.imread(f"{self.path}/{file[:-4]}.jpg")
@@ -101,7 +108,7 @@ class Dataset:
             for yolo_helmet in yolo_annotation.readlines():
                 yolo_helmet = yolo_helmet.split(" ")
                 # grab first value as class ID
-                print(yolo_helmet)
+                # print(yolo_helmet)
                 class_id = yolo_helmet[0]
                 # grab the x and y values as their own extended lists
                 yolo_x_list = yolo_helmet[1::2]
@@ -128,8 +135,6 @@ class Dataset:
             with open(f"{self.path}/{file[:-4]}.json", "w") as output_json:
                 json.dump(output_dict, output_json, indent=2)
 
-        pass
-
     # Helper function used to convert saved YOLO annotations to labelme
     def format_annotation_as_yolo(self, annotation_path):
         pass
@@ -138,7 +143,6 @@ class Dataset:
     def format_dataset_as_yolo(self):
         yolo_dataset = LabelMe2YOLO(self.path, True)
     
-
     # Helper function to get current largest image
     def get_highest_image_index(self):
         # Get file with largest numeric name in current files. BOLDLY ASSUMES ALL FILE NAMES CAN BE CAST AS INTS
@@ -149,7 +153,12 @@ class Dataset:
         else:
             return 0
 
-myData = Dataset("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Auto-Segmented")
+autoSegmented = Dataset("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Auto-Segmented")
+humanVerified = Dataset("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Human-Verified")
+# humanVerified.select_images_from_video("C:/Users/willi/OneDrive/Desktop/HITNET DATA/2024 Week 15/1.mp4", num_frames=17)
+# autoSegmented.add_data("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Human-Verified")
+autoSegmented.generate_auto_annotations("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train6/weights/best.pt")
+
 # myData.select_images_from_video("C:/Users/willi/OneDrive/Desktop/HITNET DATA/2024 Week 15/1.mp4", num_frames=25)
 # myData.add_data("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Human-Verified")
-myData.generate_auto_annotations("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train6/weights/best.pt")
+# autoSegmented.generate_auto_annotations("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train6/weights/best.pt")
