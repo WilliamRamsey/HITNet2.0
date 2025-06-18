@@ -34,6 +34,16 @@ def run_model(model_path, video_path):
                 annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True), label=str(track_id))
                 # annotator.seg_bbox(mask=mask, mask_color=colors(track_id, True), label=None)
 
+                # For position of center of helmet, average the x and y values
+                x_sum = 0
+                y_sum = 0
+                
+                for point in mask:
+                    x_sum += point[0]
+                    y_sum += point[1]
+            
+
+
         out.write(im0)
         cv2.imshow("instance-segmentation-object-tracking", im0)
 
