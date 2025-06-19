@@ -2,11 +2,15 @@ import cv2
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 
-class Helmet:
-    def __init__(self, IDs = [], masks = [], collisions = []):
-        self.IDs = IDs # List of IDs that helmet mask is appears in image
-        self.masks = masks # List of masks -> Should we transform or not?
-        self.collisions = collisions # List of indexes where helmet experienced a collision
+# [{id:str, accelerations: collicions}]
+def calculate_physics_information(model_path, video_path):
+    # Loads segmentation model
+    model = YOLO(model_path)
+    # Loads video
+    cap = cv2.VideoCapture(video_path)
+    # Initializes video parameters
+    w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS)) 
+    pass
 
 # Runs a given yolo segmentation model on a video
 def run_model(model_path, video_path, display_output=True):

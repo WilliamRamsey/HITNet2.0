@@ -1,4 +1,4 @@
-import LabelMe2YOLO
+from LabelMe2YOLO import Labelme2YOLO
 import cv2
 import os
 import base64
@@ -20,6 +20,7 @@ class Dataset:
         os.makedirs(path, exist_ok=True)
 
     # Adds images into directory without any annotations
+    # Appends whatever is in their with the correct indexing
     def select_images_from_video(self, video_path, num_frames=None, time_interval=None, frame_interval=None):
         capture = cv2.VideoCapture(video_path)
 
@@ -52,6 +53,7 @@ class Dataset:
     # Takes images and LABELME annotations in and adds them to end of dataset
     # Assumes current path is has correctly labeled images 0 to whatever
     # Assumes Annotations folder has been deleted
+    # Truly a merge method for two datasets
     def add_data(self, new_data_path):
         # Get file with largest numeric name in current files. BOLDLY ASSUMES ALL FILE NAMES CAN BE CAST AS INTS
         highest_image_index = self.get_highest_image_index()
@@ -141,7 +143,7 @@ class Dataset:
 
     # Generates final YOLO dataset in folder for training
     def format_dataset_as_yolo(self):
-        yolo_dataset = LabelMe2YOLO(self.path, True)
+        yolo_dataset = Labelme2YOLO(self.path, True)
     
     # Helper function to get current largest image
     def get_highest_image_index(self):
