@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/upload_video_form.css" type="text/css"> 
+    <title>Upload Video</title>
+</head>
+<body>
+    <h1>HITNET Video Upload Form</h1>
+    <form action="/API/video_analysis_request" method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="name_field">Name:</label>
+            <input type="text" id="name_field" name="name">
+        </div>
+        <div>
+            <label for="email_field">Email:</label>
+            <input type="text" id="email_field" name="email">
+        </div>
+        <div>
+            <label for="phone_field">Phone Number:</label>
+            <input type="text" id="phone_field" name="phone">
+        </div>
+        <div>
+            <label for="video_upload_field">Upload Video for Analysis</label>
+            <input type="file" id="video_upload_field" name="video" accept="video">
+        </div>
+        <button type="submit">Upload Form</button>
+    </form>
+</body>
+</html>
