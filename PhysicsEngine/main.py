@@ -39,7 +39,7 @@ class Track:
         else:
             return (0, 0)
         
-    def calculate_accelerations(self,):
+    def calculate_accelerations(self):
         """
         Acceleration length is two less than the length of the positions list.
         Velocity length is one less than the length of the positions list.
@@ -47,6 +47,7 @@ class Track:
         velocities = self.calculate_velocities()
         for i in range(len(velocities)):
             pass
+
 
 # Physics struct -> {id:{positions: np.array(), time_step: float}}
 # Numpy array format:

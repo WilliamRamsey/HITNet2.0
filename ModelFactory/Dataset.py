@@ -5,23 +5,55 @@ import base64
 import json
 from ultralytics.data.annotator import auto_annotate
 
-"""
-Dataset-Name/
-- YOLODataset_seg
-- 1.jpg
-- 1.json
-...
-Only use YOLO as final prep for training
-"""
-
 class Dataset:
+    """
+    ## Dataset class that manages the annotation development process for a dataset.
+    
+    Datasets follow this format:
+
+    Dataset-Name/
+    - YOLODataset_seg/ {folder containing YOLO annotations}
+    - 1.jpg
+    - 1.json {labelme annotations for 1.jpg}
+    ... {patter for images continues in ascending order}
+    
+    ### Attributes:
+        **path** (str): The absolute path to the storage location of data.
+    """
     def __init__(self, path):
+        """
+        ## Creates a new Dataset at the specified path.
+
+        If there is already data within the path it does not write over.
+        
+        ### Args:
+            **path** (str): Absolute path to the new dataset.
+
+        ### Returns:
+            None
+        """
         self.path = path
         os.makedirs(path, exist_ok=True)
 
-    # Adds images into directory without any annotations
-    # Appends whatever is in their with the correct indexing
     def select_images_from_video(self, video_path, num_frames=None, time_interval=None, frame_interval=None):
+        """
+        ## Adds selected images from video to directory without annotating.
+
+        Finds image with largest index and adds images in ascending order after it.
+        Does not check content of images and can add duplicates.
+        Can mix annotated and unannotated images.
+
+        ### Args:
+            **video_path** (str): path to the video images will be selected from.
+            **num_frames** (int): saves number of frames evenly spaced.
+            or
+            **time_interval** (int): saves n * time interval frames.
+            or
+            **frame_interval** (int): saves every nth frame.
+        
+        ### Returns:
+            None
+        """
         capture = cv2.VideoCapture(video_path)
 
         # Determine the frequency of frame selection
@@ -50,11 +82,17 @@ class Dataset:
         capture.release()
         cv2.destroyAllWindows()
 
-    # Takes images and LABELME annotations in and adds them to end of dataset
-    # Assumes current path is has correctly labeled images 0 to whatever
-    # Assumes Annotations folder has been deleted
-    # Truly a merge method for two datasets
     def add_data(self, new_data_path):
+        """
+        ## Appends this dataset with the images and LABELME annotations in new_data_path.
+
+        Assumes the images and annotations in this dataset are correctly titled 1+n.
+        Assumes the YOLO annotations folder of the new dataset has been deleted.
+        Basically a merge method.
+
+        ### Args:
+            new_data_path (str): path to the new data to add.
+        """
         # Get file with largest numeric name in current files. BOLDLY ASSUMES ALL FILE NAMES CAN BE CAST AS INTS
         highest_image_index = self.get_highest_image_index()
         for filename in os.listdir(new_data_path):
