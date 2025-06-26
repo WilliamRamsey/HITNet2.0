@@ -193,6 +193,7 @@ class Dataset:
         else:
             return 0
 
+"""
 autoSegmented = Dataset("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Auto-Segmented")
 humanVerified = Dataset("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Human-Verified")
 # humanVerified.select_images_from_video("C:/Users/willi/OneDrive/Desktop/HITNET DATA/2024 Week 15/1.mp4", num_frames=17)
@@ -202,3 +203,4 @@ autoSegmented.generate_auto_annotations("C:/Users/willi/OneDrive/Desktop/HITNET/
 # myData.select_images_from_video("C:/Users/willi/OneDrive/Desktop/HITNET DATA/2024 Week 15/1.mp4", num_frames=25)
 # myData.add_data("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Human-Verified")
 # autoSegmented.generate_auto_annotations("C:/Users/willi/OneDrive/Desktop/HITNET/runs/segment/train6/weights/best.pt")
+"""

@@ -4,7 +4,6 @@ import numpy as np
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 
-
 class Track:
     def __init__(self, id, initial_position, time_step):
         self.id = id
@@ -48,7 +47,6 @@ class Track:
         for i in range(len(velocities)):
             pass
 
-
 # Physics struct -> {id:{positions: np.array(), time_step: float}}
 # Numpy array format:
 # px x, px y, radius, (eventually collisions)
@@ -62,7 +60,6 @@ def track_objects(model_path, video_path, display_output=True):
     cap = cv2.VideoCapture(video_path)
     # Initializes video parameters
     w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS)) 
-    
     # Begins output window object
     if display_output:
         out = cv2.VideoWriter("data/output/obj.avi", cv2.VideoWriter_fourcc(*"MJPG"), fps, (w, h))
@@ -128,7 +125,7 @@ def track_objects(model_path, video_path, display_output=True):
             out.write(im0)
             cv2.imshow("instance-segmentation-object-tracking", im0)
         
-        if display_output & cv2.waitKey(1) & 0xFF == ord("q"):
+        if display_output and (cv2.waitKey(1) & 0xFF == ord("q")):
             break
         
     if display_output:
