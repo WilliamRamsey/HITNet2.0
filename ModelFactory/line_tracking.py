@@ -4,18 +4,23 @@ import numpy as np
 from skimage.measure import shannon_entropy
 import matplotlib.pyplot as plt
 
-def dynamic_canny(gray_img, target_entropy = 0.185, entropy_threshold = 0.025, lower_z = 0.6, upper_z = 1.3):
+def dynamic_canny(gray_img, target_entropy = 0.2, entropy_threshold = 0.025, lower_z = 0.5, upper_z = 1):
     blur_kernal = 7
 
     while True:
-        blurred_img = cv2.GaussianBlur(gray_img, (blur_kernal, blur_kernal), 0)
+        blured_img = cv2.GaussianBlur(gray_img, (blur_kernal, blur_kernal), 0)
 
-        med_brightness = np.median(blurred_img)
-        brightness_sdev = np.std(blurred_img)
+        med_brightness = np.median(blured_img)
+        brightness_sdev = np.std(blured_img)
         upper_threashold = med_brightness + (upper_z * brightness_sdev)
         lower_threashold = med_brightness + (lower_z * brightness_sdev)
+        """
+        color_chanels = cv2.split(blured_img)
+        edges = [cv2.Canny(chanel, 30, 90) for chanel in color_chanels]
+        combined_edges = cv2.bitwise_or(cv2.bitwise_or(edges[0], edges[1]), edges[2])
+        """
         
-        canny_edges = cv2.Canny(blurred_img, lower_threashold, upper_threashold)
+        canny_edges = cv2.Canny(blured_img, lower_threashold, upper_threashold)
 
         # evaluation
         density = np.count_nonzero(canny_edges) / canny_edges.size
@@ -29,16 +34,12 @@ def dynamic_canny(gray_img, target_entropy = 0.185, entropy_threshold = 0.025, l
         
         if entropy > (target_entropy + entropy_threshold):
             # If thresholds are too close, increase the upper
-            if upper_z - lower_z < .25:
-                upper_z += 0.03
-            else:
-                lower_z += 0.03
+            upper_z += 0.02
+            lower_z += 0.02
 
         elif entropy < (target_entropy - entropy_threshold):
-            if upper_z - lower_z > 0.5:
-                upper_z -= 0.03
-            else:
-                lower_z -= 0.03
+            upper_z -= 0.02
+            lower_z -= 0.02
         
         else:
             return canny_edges, lower_z, upper_z
@@ -46,24 +47,41 @@ def dynamic_canny(gray_img, target_entropy = 0.185, entropy_threshold = 0.025, l
 
 
 cap = cv2.VideoCapture("C:/Users/willi/Downloads/1.mp4")
-lower_z = 0.6
-upper_z = 1.3
+lower_z = 0.5
+upper_z = 1
+ret, old_image = cap.read()
+old_gray_image = cv2.cvtColor(old_image, cv2.COLOR_BGR2GRAY)
 
 while True:
-    print("===")
     ret, image = cap.read()
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     if not ret:
         break
-    dst, lower_z, upper_z = dynamic_canny(image, lower_z = lower_z, upper_z = upper_z)
-    cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
-    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 200, None, 150, 40)
+
+    edges, lower_z, upper_z = dynamic_canny(image, lower_z=lower_z, upper_z=upper_z)
+
+    cdst = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+    linesP = cv2.HoughLinesP(edges, 4, np.pi / 180, 500, None, 300, 20)
 
     if linesP is not None:
+        new_tracking_points = []
         for i in range(0, len(linesP)):
             l = linesP[i][0]
             cv2.line(cdst, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
-    
+            # cv2.circle(cdst, (l[0], l[1]), 1, (0,0,225), 3)
+            # cv2.circle(cdst, (l[2], l[3]), 1, (0,0,225), 3)
+            new_tracking_points.append((l[0], l[1]))
+            new_tracking_points.append((l[2], l[3]))
+        
+        p0 = np.array(new_tracking_points, dtype=np.float32).reshape(-1, 1, 2)
+        p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray_image, gray_image, p0, None)
+        
+        for i in range(len(p1)):
+            cords = (int(p1[i][0,0]), int(p1[i][0,1]))
+            cv2.arrowedLine(image, new_tracking_points[i], cords, (0,0,225), 4)
+        old_gray_image = gray_image
+    cv2.imshow("Optical Flow", image)
     cv2.imshow("Detected Lines (in red) - Probabilistic Hough Transform", cdst)
     cv2.waitKey(1)
 
