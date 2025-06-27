@@ -4,80 +4,60 @@ import numpy as np
 from skimage.measure import shannon_entropy
 import matplotlib.pyplot as plt
 
-def dynamic_canny(gray_img, target_entropy=0.4, target_density=0.10, entropy_threshold=0.1, density_threshold=0.025):
-    blur_kernal = 11
-    threashold_sigma = 0.33
-
-    entropies = []
-    densities = []
+def dynamic_canny(gray_img, target_entropy = 0.185, entropy_threshold = 0.025, lower_z = 0.6, upper_z = 1.3):
+    blur_kernal = 7
 
     while True:
         blurred_img = cv2.GaussianBlur(gray_img, (blur_kernal, blur_kernal), 0)
 
         med_brightness = np.median(blurred_img)
-        lower_threashold = int(max(0, (1 - threashold_sigma) * med_brightness))
-        upper_threashold = int(min(225, (1 + threashold_sigma) * med_brightness))
+        brightness_sdev = np.std(blurred_img)
+        upper_threashold = med_brightness + (upper_z * brightness_sdev)
+        lower_threashold = med_brightness + (lower_z * brightness_sdev)
         
         canny_edges = cv2.Canny(blurred_img, lower_threashold, upper_threashold)
 
         # evaluation
         density = np.count_nonzero(canny_edges) / canny_edges.size
         entropy = shannon_entropy(canny_edges)
-        print(f"k: {blur_kernal}, t1: {lower_threashold}, t2: {upper_threashold}, density: {density}, entropy: {entropy}")
+        print(f"k: {blur_kernal}, lower_z: {lower_z}, upper_z: {upper_z}, density: {density}, entropy: {entropy}")
 
-        # display
+        # display image
         cdist = cv2.cvtColor(canny_edges, cv2.COLOR_GRAY2BGR)
         cv2.imshow(f"Density Adjust", cdist)
         cv2.waitKey(1)
-
-        # updation
-
-        stop = True
-        """
-        if density > (target_density + density_threshold):
-            threashold_sigma -= 0.05
-            stop = False
-        elif density < (target_density - density_threshold):
-            threashold_sigma += 0.05
-            stop = False
-
+        
         if entropy > (target_entropy + entropy_threshold):
-            blur_kernal += 2
-            stop = False
-        elif entropy < (target_entropy + entropy_threshold):
-            blur_kernal = max(1, blur_kernal - 2)
-            stop = False
-            if blur_kernal == 1:
-                stop = True
-        """
-        entropies.append(entropy)
-        densities.append(density)
+            # If thresholds are too close, increase the upper
+            if upper_z - lower_z < .25:
+                upper_z += 0.03
+            else:
+                lower_z += 0.03
 
-        if stop or lower_threashold == 0 or upper_threashold == 225:
-            cv2.destroyAllWindows()
-            print(len(entropies), len(entropies))
-            plt.scatter(entropies, densities)
-            plt.xlabel("Entropy")
-            plt.ylabel("Densities")
-            plt.title("Entropy vs density")
-            plt.show()
-            break
+        elif entropy < (target_entropy - entropy_threshold):
+            if upper_z - lower_z > 0.5:
+                upper_z -= 0.03
+            else:
+                lower_z -= 0.03
+        
+        else:
+            return canny_edges, lower_z, upper_z
 
-src = cv2.imread("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Helmets/Compiled-Data/1.jpg")
-dynamic_canny(src)
 
-"""
-cap = cv2.VideoCapture("C:/Users/willi/OneDrive/Desktop/HITNET DATA/2024 Playoff/1.mp4")
+
+cap = cv2.VideoCapture("C:/Users/willi/Downloads/1.mp4")
+lower_z = 0.6
+upper_z = 1.3
+
 while True:
+    print("===")
     ret, image = cap.read()
 
     if not ret:
         break
-    
-    gaus = cv2.GaussianBlur(image, (7,7), 0)
-    dst = cv2.Canny(gaus, 35, 80, None, 3)
+    dst, lower_z, upper_z = dynamic_canny(image, lower_z = lower_z, upper_z = upper_z)
     cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
-    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 200, None, 120, 25)
+    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 200, None, 150, 40)
 
     if linesP is not None:
         for i in range(0, len(linesP)):
@@ -88,7 +68,7 @@ while True:
     cv2.waitKey(1)
 
 cap.release()
-"""
+
 
 """
 src = cv2.imread("C:/Users/willi/OneDrive/Desktop/HITNET/data/datasets/Helmets/Compiled-Data/1.jpg")
