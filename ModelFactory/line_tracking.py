@@ -55,7 +55,6 @@ old_gray_image = cv2.cvtColor(old_image, cv2.COLOR_BGR2GRAY)
 new_tracking_points = []
 
 while True:
-
     ret, image = cap.read()
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
