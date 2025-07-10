@@ -4,7 +4,10 @@ import numpy as np
 from ultralytics import YOLO
 from ultralytics.utils.plotting import Annotator, colors
 
-
+class Trajectory:
+    def __init__(self):
+        self.pixels = []
+    
 class HelmetTrack:
     """
     ## Represents the path taken by a helmet.
@@ -102,7 +105,6 @@ class HelmetTrack:
         x_accel = (x_velo - self.kinematics[-1][4]) / self.time_step
         y_accel = (y_velo - self.kinematics[-1][5]) / self.time_step
         return x_accel, y_accel
-
 
 class Run:
     """
